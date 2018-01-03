@@ -1,0 +1,341 @@
+<nav>
+<div class="nav-wrapper light-blue lighten-3">
+  <a href="#" class="brand-logo center"><%= image_tag("logo-litter.png", width: "50em") %></a>
+  <ul class="left">
+    <li class="active"><a href="/users/profile">HOME<i class="large material-icons right">home</i></a></li>
+    <li><a href="/users/find">FIND FRIENDS<i class="large material-icons right">explore</i></a></li>
+  </ul>
+  <ul class="right">
+    <li><form action="/users/logout" method="POST">
+    	<button class="btn waves-effect waves-light my_btn_large" type="submit">Logout<i class="large material-icons right">power_settings_new</i>
+  		</button>
+  	</form></li>
+  </ul>
+</div>
+</nav>
+
+<!-- Modal Structure -->
+<div id="modal1" class="modal modal-fixed-footer">
+	<form action="/users/avatar" method="POST">
+    <div class="modal-content">
+      <h4>Choose Your Avatar</h4>
+				<div class="col s10 m10 l10">
+			  	<div class="inline">
+				    <select class="icons" name="avatar">
+				      <% @avatars.each do |key, value| %>
+				      	<option value="<%= value %>" data-icon="/assets/avatar/<%= value %>" class="circle"><%= key.to_s %></option>
+				      <% end %>
+			    	</select>
+			    	<label>Images in select</label>
+			    </div>
+			  </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-action modal-close waves-effect waves-light light-blue lighten-3 btn-flat" type="submit">Change</button>
+    </div>
+  </form>
+</div>
+
+
+
+<!-- Page Layout here -->
+<div class="row">
+
+  <div class="col s12 m4 l3"> <!-- Note that "m4 l3" was added -->
+    <!-- Grey navigation panel
+
+          This content will be:
+      3-columns-wide on large screens,
+      4-columns-wide on medium screens,
+      12-columns-wide on small screens  -->
+
+	  <div class="card">
+	    <div class="card-image waves-effect waves-block waves-light my_overflow_visible">
+	      <%= image_tag(@user.avatar, width: "50em") %>
+	      <!-- Modal Trigger -->
+	    	<button data-target="modal1" class="btn-floating halfway-fab red" type="submit"><i class="material-icons">add_a_photo</i></button>
+	    </div>
+
+	    <div class="card-content">
+	      <span class="card-title activator grey-text text-darken-4"><%= @user.name %><i class="material-icons right">more_vert</i></span>
+	      <br>
+	      <div class="row">
+	      	<div class="col s6 m6 l5">Tweets </div>
+	      	<div class="col s6 m2 l5">Following </div>
+	    	</div>
+	    	<div class="row">
+	    		<div class="col s6 m6 l5"><p class="blue-text text-darken-2 my_p"><%= @user.tweets.length %></p></div>
+	    		<div class="col s6 m2 l5"><p class="blue-text text-darken-2 my_p"><%= @user.follower.length %></p></div>
+	    	</div>
+	    </div>
+	    <div class="card-reveal">
+	      <span class="card-title grey-text text-darken-4">Status<i class="material-icons right">close</i></span>
+	      <form action="/users/status" method="post">
+					<div class="input-field">
+				    <textarea type="text" class="materialize-textarea" name="status"><%= @user.status %></textarea>
+				    <button class="btn-floating red right" type="submit">
+			  			<i class="large material-icons">mode_edit</i>
+						</button>
+				  </div>
+				</form>
+	    </div>
+	  </div>
+	  
+  </div>
+
+  <div class="col s12 m8 l9"> <!-- Note that "m8 l9" was added -->
+    <!-- Teal page content
+
+          This content will be:
+      9-columns-wide on large screens,
+      8-columns-wide on medium screens,
+      12-columns-wide on small screens  -->
+    <div class="row">
+	    <div class="col s7 m12 l8">
+				<h4>Hi <%= @user.name %>.</h4>
+				<form action="/tweets/tweet" method="post">
+					<div class="input-field">
+				    <textarea id="tweet" type="text" class="materialize-textarea" name="content"></textarea>
+				    <label for="tweet">Tweet</label>
+				    <button class="btn waves-effect waves-light" type="submit">Tweet
+			  			<i class="material-icons right">send</i>
+						</button>
+				  </div>
+				</form>
+			</div>
+		</div>
+
+		<div class="row">
+			<% @tweets.sort_by(&:updated_at).reverse.each do |tweet| %>
+				<% user = User.where(id: tweet.user_id).first %>
+
+			
+			  <div class="col s7 m12 l8">
+			    <!-- <h4 class="header">By: <%= user.name %></h4> -->
+			    <div class="card horizontal hoverable">
+			      <div class="card-image">
+			      	<%= image_tag(user.avatar, width: "50px", height: "50px") %>
+			      </div>
+			      <div class="card-stacked">
+			      	
+			      	<div class="card-action">
+			      		<form action="/tweets/delete" method="POST">
+				        	<div class="fixed-action-btn horizontal right">
+								    <a class="btn-floating btn-medium red">
+								      <i class="large material-icons">mode_edit</i>
+								    </a>
+								    <ul>
+								      <li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li>
+								      <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>
+								      <li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>
+								      <li><form action="/tweets/delete" method="POST"><button class="btn-floating blue" type="submit"><i class="material-icons">delete_sweep</i></button><input type="hidden" name="tweet_id" value="<%= tweet.id %>"></form></li>
+								    </ul>
+							  	</div>
+							  </form>
+
+			        </div>
+			        
+			        <div class="card-content">
+			          <p><%= tweet.content %><% user = User.where(id: tweet.user_id).first %></p>
+			        </div>
+			        <div class="card-action">
+			        	<span><%= user.name %></span>
+			        	<form class="my_inline" action="/tweets/feel" method="POST">
+		        			<button class="btn-floating btn-small waves-effect waves-light red right"><i class="material-icons"><%= tweet.emotion( tweet.id ) %></i></button>
+		        			<input type="hidden" name="user_id" value="<%= session[:user_id] %>">
+		        			<input type="hidden" name="tweet_id" value="<%= tweet.id %>">
+			        	</form>
+			        </div>
+			      </div>
+			    </div>
+			  </div>
+			<% end %>
+		</div>
+
+
+		  </div>
+		  </div>
+		  
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<% if false %>
+  <!-- <form action="/users/avatar" method="POST">
+	    <ul id="dropdown" class="collection">
+	    	<li class="collection-item avatar"><%= image_tag("avatar/boy.png", class: "circle") %><input name="boy" type="radio" id="boy" />
+      	<label for="boy">Boy</label></li>
+	    	<li class="collection-item avatar"><%= image_tag("avatar/boy-1.png", class: "circle") %><input name="boy-1" type="radio" id="boy1" />
+      	<label for="boy1">Boy-1</label></li>
+      	<li class="collection-item avatar"><%= image_tag("avatar/girl.png", class: "circle") %><input name="girl" type="radio" id="girl" />
+      	<label for="girl">Girl</label></li>
+      	<li class="collection-item avatar"><%= image_tag("avatar/girl-1.png", class: "circle") %><input name="girl-1" type="radio" id="girl1" />
+      	<label for="girl1">Girl-1</label></li>
+      	<li class="collection-item avatar"><%= image_tag("avatar/man.png", class: "circle") %><input name="man" type="radio" id="man" />
+      	<label for="man">Man</label></li>
+		    <li class="collection-item avatar"><%= image_tag("avatar/man-1.png", class: "circle") %><input name="man-1" type="radio" id="man1" />
+      	<label for="man1">Man-1</label></li>
+      	<li class="collection-item avatar"><%= image_tag("avatar/man-2.png", class: "circle") %><input name="man-2" type="radio" id="man2" />
+      	<label for="man2">Man-2</label></li>
+      	<li class="collection-item avatar"><%= image_tag("avatar/man-3.png", class: "circle") %><input name="man-3" type="radio" id="man3" />
+      	<label for="man3">Man-3</label></li>
+      	<li class="collection-item avatar"><%= image_tag("avatar/man-4.png", class: "circle") %><input name="man-4" type="radio" id="man4" />
+      	<label for="man4">Man-4</label></li>
+      	<li class="collection-item avatar"><button class="btn-floating waves-effect waves-light light-blue lighten-3" type="submit"><i class="material-icons">send</i></button></li>
+		  </ul>
+  	</form> -->
+<% end %>

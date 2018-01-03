@@ -1,0 +1,41 @@
+<nav>
+<div class="nav-wrapper light-blue lighten-3">
+  <a href="#!" class="brand-logo center"><%= image_tag("logo-litter.png", width: "50em") %></a>
+  <ul class="left">
+  	<li><a href="/users/signin">Sign in</a></li>
+    <li class="active"><a href="/users/signup" class="active">Sign up</a></li>
+  </ul>
+</div>
+</nav>
+
+<br><br><br>
+
+<form action="/users/signup_submit" method="POST">
+  
+  <div class="row">
+    <div class="input-field col s7">
+      <input id="full_name" type="text" name="name" class="validate">
+      <label for="full_name">Full Name</label>
+  </div>
+
+  <div class="row">
+    <div class="input-field col s7">
+      <input id="email" type="email" name="email" class="validate">
+      <label for="email">Email</label>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="input-field col s7">
+      <input id="password" type="password" name="pass" class="validate">
+      <label for="password">Password</label>
+    </div>
+  </div>
+
+  <button class="btn waves-effect waves-light" type="submit">Sign up
+  	<i class="material-icons right">send</i>
+	</button>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+</form>
